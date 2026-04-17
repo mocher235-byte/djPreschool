@@ -28,9 +28,14 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-5px); }
         }
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .animate-blob { animation: blob 7s infinite; }
         .animate-float { animation: float 4s ease-in-out infinite; }
         .animate-bounce-short { animation: bounce-short 0.5s ease-in-out; }
+        .animate-fade-in-up { animation: fade-in-up 0.5s ease-out forwards; }
         .animation-delay-500 { animation-delay: 0.5s; }
         .animation-delay-2000 { animation-delay: 2s; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
@@ -44,7 +49,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useRef } = React;
 
         // Icon component wrapper for Lucide with error safety
         const Icon = ({ name, className = "w-6 h-6", ...props }) => {
@@ -64,6 +69,8 @@
             const [submitted, setSubmitted] = useState(false);
             const [isSubmitting, setIsSubmitting] = useState(false);
             const [error, setError] = useState(null);
+            const formRef = useRef(null);
+
             const [formData, setFormData] = useState({
                 studentName: '',
                 school: '',
@@ -113,7 +120,7 @@
                         method: "POST",
                         headers: {
                             'Content-Type': 'application/json',
-                            'Accept': 'application/json' // 強制 Formspree 回傳 JSON 避免跳轉
+                            'Accept': 'application/json'
                         },
                         body: JSON.stringify(formData)
                     });
@@ -121,12 +128,18 @@
                     if (response.ok) {
                         setSubmitted(true);
                         setFormData({ studentName: '', school: '', grade: '', phone: '' });
+                        // 提交成功後捲動到訊息頂部
+                        setTimeout(() => {
+                            const successEl = document.getElementById('success-message');
+                            if (successEl) successEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 100);
                     } else {
                         const data = await response.json();
-                        setError(data.error || "提交發生錯誤，請稍後再試。");
+                        setError(data.error || "提交失敗，請檢查網路後再試。");
                     }
                 } catch (err) {
-                    setError("網路連線異常，請檢查網路後重試。");
+                    setError("連線異常，請確認您的網路狀況。");
+                    console.error("Formspree Error:", err);
                 } finally {
                     setIsSubmitting(false);
                 }
@@ -268,104 +281,117 @@
                     {/* Enrollment Form Section */}
                     <section id="enroll-form" className="py-24 bg-white">
                         <div className="max-w-4xl mx-auto px-4">
-                            <div className="bg-orange-50 rounded-[3rem] p-8 md:p-16 shadow-2xl border-2 border-orange-100 relative overflow-hidden">
+                            <div className="bg-orange-50 rounded-[3rem] p-8 md:p-16 shadow-2xl border-2 border-orange-100 relative overflow-hidden min-h-[500px] flex items-center justify-center">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-orange-200/30 rounded-full -translate-y-16 translate-x-16"></div>
-                                <div className="text-center mb-12">
-                                    <h3 className="text-4xl font-black text-gray-900 mb-4 italic">預約報名 / 諮詢</h3>
-                                    <p className="text-gray-600 font-bold">請填寫下方資訊，我們將有專人與您聯繫</p>
-                                </div>
-
-                                {submitted ? (
-                                    <div className="bg-white rounded-3xl p-12 text-center border-2 border-green-200 shadow-lg animate-bounce-short">
-                                        <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                                            <Icon name="check" className="text-green-600 w-10 h-10" />
+                                
+                                <div className="w-full">
+                                    {submitted ? (
+                                        <div id="success-message" className="bg-white rounded-3xl p-12 text-center border-2 border-green-200 shadow-xl animate-fade-in-up">
+                                            <div className="bg-green-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 animate-float">
+                                                <Icon name="check" className="text-green-600 w-12 h-12" />
+                                            </div>
+                                            <h4 className="text-3xl font-black text-gray-900 mb-4 italic">提交成功！</h4>
+                                            <p className="text-xl text-gray-600 font-bold mb-8">
+                                                謝謝您的預約，<br/>
+                                                補習班老師將盡快與您聯絡。✨
+                                            </p>
+                                            <button 
+                                                onClick={() => setSubmitted(false)}
+                                                className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-lg hover:scale-105"
+                                            >
+                                                返回表單
+                                            </button>
                                         </div>
-                                        <h4 className="text-2xl font-bold text-gray-900 mb-2">提交成功！</h4>
-                                        <p className="text-gray-500">謝謝您的預約，補習班老師將盡快與您聯絡。</p>
-                                        <button 
-                                            onClick={() => setSubmitted(false)}
-                                            className="mt-6 text-sm text-orange-500 font-bold hover:underline"
-                                        >
-                                            再次填寫表單
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <form onSubmit={handleSubmit} className="space-y-8">
-                                        {error && (
-                                            <div className="bg-red-50 text-red-600 p-4 rounded-xl border border-red-100 flex items-center animate-bounce-short">
-                                                <Icon name="alert-circle" className="w-5 h-5 mr-3" />
-                                                <span className="font-bold">{error}</span>
+                                    ) : (
+                                        <>
+                                            <div className="text-center mb-12">
+                                                <h3 className="text-4xl font-black text-gray-900 mb-4 italic">預約報名 / 諮詢</h3>
+                                                <p className="text-gray-600 font-bold">請填寫下方資訊，我們將有專人與您聯繫</p>
                                             </div>
-                                        )}
-                                        <div className="grid md:grid-cols-2 gap-8">
-                                            <div className="space-y-3">
-                                                <label className="block text-xl font-black text-gray-800">學生姓名</label>
-                                                <input 
-                                                    name="studentName"
-                                                    type="text" 
-                                                    required
-                                                    placeholder="請輸入姓名"
-                                                    value={formData.studentName}
-                                                    onChange={(e) => setFormData({...formData, studentName: e.target.value})}
-                                                    className="w-full bg-white border-2 border-orange-100 rounded-2xl px-6 py-4 text-lg focus:border-orange-500 focus:ring-4 focus:ring-orange-200 outline-none transition-all placeholder:text-gray-300"
-                                                />
-                                            </div>
-                                            <div className="space-y-3">
-                                                <label className="block text-xl font-black text-gray-800">就讀學校</label>
-                                                <input 
-                                                    name="school"
-                                                    type="text" 
-                                                    required
-                                                    placeholder="例如：竹北國小"
-                                                    value={formData.school}
-                                                    onChange={(e) => setFormData({...formData, school: e.target.value})}
-                                                    className="w-full bg-white border-2 border-orange-100 rounded-2xl px-6 py-4 text-lg focus:border-orange-500 focus:ring-4 focus:ring-orange-200 outline-none transition-all placeholder:text-gray-300"
-                                                />
-                                            </div>
-                                        </div>
 
-                                        <div className="grid md:grid-cols-2 gap-8">
-                                            <div className="space-y-3">
-                                                <label className="block text-xl font-black text-gray-800">年級</label>
-                                                <select 
-                                                    name="grade"
-                                                    required
-                                                    value={formData.grade}
-                                                    onChange={(e) => setFormData({...formData, grade: e.target.value})}
-                                                    className="w-full bg-white border-2 border-orange-100 rounded-2xl px-6 py-4 text-lg focus:border-orange-500 focus:ring-4 focus:ring-orange-200 outline-none transition-all appearance-none cursor-pointer"
+                                            <form onSubmit={handleSubmit} className="space-y-8">
+                                                {error && (
+                                                    <div className="bg-red-50 text-red-600 p-4 rounded-xl border border-red-100 flex items-center animate-bounce-short">
+                                                        <Icon name="alert-circle" className="w-5 h-5 mr-3" />
+                                                        <span className="font-bold">{error}</span>
+                                                    </div>
+                                                )}
+                                                <div className="grid md:grid-cols-2 gap-8">
+                                                    <div className="space-y-3">
+                                                        <label className="block text-xl font-black text-gray-800">學生姓名</label>
+                                                        <input 
+                                                            name="studentName"
+                                                            type="text" 
+                                                            required
+                                                            placeholder="請輸入姓名"
+                                                            value={formData.studentName}
+                                                            onChange={(e) => setFormData({...formData, studentName: e.target.value})}
+                                                            className="w-full bg-white border-2 border-orange-100 rounded-2xl px-6 py-4 text-lg focus:border-orange-500 focus:ring-4 focus:ring-orange-200 outline-none transition-all placeholder:text-gray-300 shadow-sm"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-3">
+                                                        <label className="block text-xl font-black text-gray-800">就讀學校</label>
+                                                        <input 
+                                                            name="school"
+                                                            type="text" 
+                                                            required
+                                                            placeholder="例如：竹北國小"
+                                                            value={formData.school}
+                                                            onChange={(e) => setFormData({...formData, school: e.target.value})}
+                                                            className="w-full bg-white border-2 border-orange-100 rounded-2xl px-6 py-4 text-lg focus:border-orange-500 focus:ring-4 focus:ring-orange-200 outline-none transition-all placeholder:text-gray-300 shadow-sm"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid md:grid-cols-2 gap-8">
+                                                    <div className="space-y-3">
+                                                        <label className="block text-xl font-black text-gray-800">年級</label>
+                                                        <div className="relative">
+                                                            <select 
+                                                                name="grade"
+                                                                required
+                                                                value={formData.grade}
+                                                                onChange={(e) => setFormData({...formData, grade: e.target.value})}
+                                                                className="w-full bg-white border-2 border-orange-100 rounded-2xl px-6 py-4 text-lg focus:border-orange-500 focus:ring-4 focus:ring-orange-200 outline-none transition-all appearance-none cursor-pointer shadow-sm"
+                                                            >
+                                                                <option value="" disabled>請點選年級</option>
+                                                                <option value="小班">小班</option>
+                                                                <option value="中班">中班</option>
+                                                                <option value="大班">大班</option>
+                                                                <option value="大班升小一">大班升小一</option>
+                                                                <option value="其他">其他</option>
+                                                            </select>
+                                                            <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-orange-400">
+                                                                <Icon name="chevron-down" className="w-6 h-6" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="space-y-3">
+                                                        <label className="block text-xl font-black text-gray-800">家長聯絡電話</label>
+                                                        <input 
+                                                            name="phone"
+                                                            type="tel" 
+                                                            required
+                                                            placeholder="09XX-XXX-XXX"
+                                                            value={formData.phone}
+                                                            onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                                                            className="w-full bg-white border-2 border-orange-100 rounded-2xl px-6 py-4 text-lg focus:border-orange-500 focus:ring-4 focus:ring-orange-200 outline-none transition-all placeholder:text-gray-300 shadow-sm"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <button 
+                                                    type="submit"
+                                                    disabled={isSubmitting}
+                                                    className={`w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-2xl py-6 rounded-3xl shadow-xl transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center group ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                                                 >
-                                                    <option value="" disabled>請點選年級</option>
-                                                    <option value="小班">小班</option>
-                                                    <option value="中班">中班</option>
-                                                    <option value="大班">大班</option>
-                                                    <option value="大班升小一">大班升小一</option>
-                                                    <option value="其他">其他</option>
-                                                </select>
-                                            </div>
-                                            <div className="space-y-3">
-                                                <label className="block text-xl font-black text-gray-800">家長聯絡電話</label>
-                                                <input 
-                                                    name="phone"
-                                                    type="tel" 
-                                                    required
-                                                    placeholder="09XX-XXX-XXX"
-                                                    value={formData.phone}
-                                                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                                                    className="w-full bg-white border-2 border-orange-100 rounded-2xl px-6 py-4 text-lg focus:border-orange-500 focus:ring-4 focus:ring-orange-200 outline-none transition-all placeholder:text-gray-300"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <button 
-                                            type="submit"
-                                            disabled={isSubmitting}
-                                            className={`w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-2xl py-6 rounded-3xl shadow-xl transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center group ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
-                                        >
-                                            {isSubmitting ? '傳送中...' : '立即提交報名'} 
-                                            {!isSubmitting && <Icon name="chevron-right" className="ml-2 w-8 h-8 group-hover:translate-x-1 transition-transform" />}
-                                        </button>
-                                    </form>
-                                )}
+                                                    {isSubmitting ? '正在傳送報名資料...' : '立即提交報名'} 
+                                                    {!isSubmitting && <Icon name="chevron-right" className="ml-2 w-8 h-8 group-hover:translate-x-1 transition-transform" />}
+                                                </button>
+                                            </form>
+                                        </>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </section>
