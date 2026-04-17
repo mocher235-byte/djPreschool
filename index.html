@@ -22,7 +22,7 @@
         }
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-12px); }
         }
         @keyframes bounce-short {
             0%, 100% { transform: translateY(0); }
@@ -38,6 +38,21 @@
         .animate-fade-in-up { animation: fade-in-up 0.5s ease-out forwards; }
         .animation-delay-500 { animation-delay: 0.5s; }
         .animation-delay-2000 { animation-delay: 2s; }
+        
+        /* 3D Button Style */
+        .btn-3d {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2), inset 0 -4px 0 rgba(0, 0, 0, 0.1);
+        }
+        .btn-3d:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), inset 0 -4px 0 rgba(0, 0, 0, 0.1);
+        }
+        .btn-3d:active {
+            transform: translateY(0px) scale(0.98);
+            box-shadow: 0 5px 10px -2px rgba(0, 0, 0, 0.2), inset 0 0 0 rgba(0, 0, 0, 0.1);
+        }
+
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #1f2937; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px; }
@@ -51,16 +66,17 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // Icon component wrapper for Lucide with error safety
+        // Optimized Icon component
         const Icon = ({ name, className = "w-6 h-6", ...props }) => {
             useEffect(() => {
-                try {
+                const initIcons = () => {
                     if (window.lucide) {
                         window.lucide.createIcons();
                     }
-                } catch (err) {
-                    console.warn("Lucide icons failed to load", err);
-                }
+                };
+                initIcons();
+                const timer = setTimeout(initIcons, 150);
+                return () => clearTimeout(timer);
             }, [name]);
             return <i data-lucide={name} className={className} {...props}></i>;
         };
@@ -69,7 +85,6 @@
             const [submitted, setSubmitted] = useState(false);
             const [isSubmitting, setIsSubmitting] = useState(false);
             const [error, setError] = useState(null);
-            const formRef = useRef(null);
 
             const [formData, setFormData] = useState({
                 studentName: '',
@@ -97,14 +112,6 @@
                 description: "在「金名德晉」遇見最有耐心的老師，陪伴孩子跨越拼音關卡。誰說學正音很枯燥？看孩子們如何快樂學習，自信發音！"
             };
 
-            const videos = [
-                { id: "4bGeESyP-os", title: "小小李白唐詩挑戰", desc: "看孩子們如何用四聲挑戰經典唐詩，學習更有趣！" },
-                { id: "QvdFyr3V-oM", title: "老師耐心個別指導", desc: "一對一細心調整發音，給孩子最溫暖的陪伴。" },
-                { id: "LtBOBiLTIQw", title: "超強聲調大聲唸", desc: "跟著老師大聲唸出超強聲調，自信感爆棚！" },
-                { id: "O6aNmcJX0VA", title: "學習日常碎片", desc: "記錄寶貝們自信拼音的每一個快樂瞬間。" },
-                { id: "abMf5N77F3I", title: "跨越拼音關卡", desc: "最專業的教學，讓拼音不再是難事。" }
-            ];
-
             const scrollToForm = () => {
                 const element = document.getElementById('enroll-form');
                 if (element) element.scrollIntoView({ behavior: 'smooth' });
@@ -128,7 +135,6 @@
                     if (response.ok) {
                         setSubmitted(true);
                         setFormData({ studentName: '', school: '', grade: '', phone: '' });
-                        // 提交成功後捲動到訊息頂部
                         setTimeout(() => {
                             const successEl = document.getElementById('success-message');
                             if (successEl) successEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -139,7 +145,6 @@
                     }
                 } catch (err) {
                     setError("連線異常，請確認您的網路狀況。");
-                    console.error("Formspree Error:", err);
                 } finally {
                     setIsSubmitting(false);
                 }
@@ -147,13 +152,23 @@
 
             return (
                 <div className="min-h-screen bg-orange-50 font-sans text-gray-800 pb-20 md:pb-0">
-                    {/* 3D Floating Social Icons */}
-                    <div className="fixed bottom-6 right-6 z-[100] flex flex-col space-y-4">
-                        <a href={courseData.facebookUrl} target="_blank" className="bg-blue-600 text-white p-3 rounded-2xl shadow-lg hover:-translate-y-2 transition-all flex items-center justify-center animate-float">
-                            <Icon name="facebook" className="w-8 h-8" />
+                    {/* Professional 3D Floating Social Icons */}
+                    <div className="fixed bottom-6 right-6 z-[100] flex flex-col space-y-5">
+                        <a 
+                            href={courseData.facebookUrl} 
+                            target="_blank" 
+                            className="btn-3d w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center animate-float"
+                            title="前往臉書"
+                        >
+                            <Icon name="facebook" className="w-8 h-8 text-white fill-current" />
                         </a>
-                        <a href={courseData.lineUrl} target="_blank" className="bg-[#06C755] text-white p-3 rounded-2xl shadow-lg hover:-translate-y-2 transition-all flex items-center justify-center animate-float animation-delay-500">
-                            <Icon name="message-circle" className="w-8 h-8" />
+                        <a 
+                            href={courseData.lineUrl} 
+                            target="_blank" 
+                            className="btn-3d w-14 h-14 bg-[#06C755] rounded-2xl flex items-center justify-center animate-float animation-delay-500"
+                            title="LINE 諮詢"
+                        >
+                            <Icon name="message-circle" className="w-8 h-8 text-white fill-current" />
                         </a>
                     </div>
 
@@ -171,9 +186,9 @@
                     </nav>
 
                     {/* Hero Section */}
-                    <header className="relative bg-white pt-12 pb-20 overflow-hidden">
+                    <header className="relative bg-white pt-12 pb-20 overflow-hidden text-center md:text-left">
                         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center">
-                            <div className="md:w-1/2 text-center md:text-left z-10 mb-10 md:mb-0">
+                            <div className="md:w-1/2 z-10 mb-10 md:mb-0">
                                 <span className="inline-block bg-orange-100 text-orange-600 px-4 py-1 rounded-full text-sm font-bold mb-4 shadow-sm">
                                     ✨ 2026 暑期限定招生 ✨
                                 </span>
@@ -181,12 +196,12 @@
                                     讓孩子愛上拼音<br/>
                                     <span className="text-orange-500">自信迎接小一新生活</span>
                                 </h2>
-                                <p className="text-lg text-gray-600 mb-8 max-w-lg mx-auto md:mx-0 leading-relaxed">
+                                <p className="text-lg text-gray-600 mb-8 max-w-lg mx-auto md:mx-0 leading-relaxed font-medium">
                                     {courseData.description}
                                 </p>
-                                <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center md:justify-start">
-                                    <button onClick={scrollToForm} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl font-black text-xl flex items-center justify-center shadow-lg transition-transform hover:scale-105">
-                                        立即諮詢 <Icon name="chevron-right" className="w-6 h-6 ml-2" />
+                                <div className="flex justify-center md:justify-start">
+                                    <button onClick={scrollToForm} className="btn-3d bg-orange-500 text-white px-10 py-5 rounded-2xl font-black text-2xl flex items-center shadow-lg">
+                                        立即諮詢報名 <Icon name="chevron-right" className="w-8 h-8 ml-2" />
                                     </button>
                                 </div>
                             </div>
@@ -200,10 +215,10 @@
                     {/* Course Batches */}
                     <section className="py-20 bg-orange-50">
                         <div className="max-w-6xl mx-auto px-4 text-center">
-                            <h3 className="text-3xl font-bold mb-4 text-gray-900">【 課程日期與梯次 】</h3>
+                            <h3 className="text-3xl font-bold mb-4 text-gray-900 italic">【 課程日期與梯次 】</h3>
                             <div className="grid md:grid-cols-2 gap-8">
                                 {courseData.batches.map(batch => (
-                                    <div key={batch.id} className="bg-white p-8 rounded-3xl shadow-xl border-t-8 border-orange-500">
+                                    <div key={batch.id} className="bg-white p-8 rounded-3xl shadow-xl border-t-8 border-orange-500 transform hover:-translate-y-2 transition-all">
                                         <div className="flex justify-between items-center mb-6">
                                             <span className="bg-orange-100 text-orange-600 font-bold px-3 py-1 rounded-lg">{batch.name}</span>
                                             <span className="text-green-500 text-sm font-medium flex items-center">
@@ -211,75 +226,16 @@
                                                 {batch.status}
                                             </span>
                                         </div>
-                                        <div className="text-4xl font-black text-gray-800 mb-2">{batch.date}</div>
-                                        <p className="text-gray-500 mb-2 font-medium">包含正音拼音、聲調練習、趣味識字</p>
+                                        <div className="text-4xl font-black text-gray-800 mb-2 tracking-tight">{batch.date}</div>
+                                        <p className="text-gray-500 font-medium">包含正音拼音、聲調練習、趣味識字</p>
                                     </div>
                                 ))}
                             </div>
                         </div>
                     </section>
 
-                    {/* Course Schedule */}
-                    <section className="py-20 bg-white">
-                        <div className="max-w-4xl mx-auto px-4 text-center">
-                            <div className="inline-flex items-center justify-center bg-orange-100 text-orange-600 px-6 py-2 rounded-full mb-6 font-bold">
-                                <Icon name="book-open" className="w-5 h-5 mr-2" /> 課程大綱與時間表
-                            </div>
-                            <h3 className="text-3xl font-bold mb-8 text-gray-900">正音班詳細課表</h3>
-                            <div className="bg-orange-50 p-4 md:p-8 rounded-[2.5rem] border-2 border-orange-100">
-                                <img src={courseData.scheduleImage} alt="Schedule" className="w-full h-auto rounded-2xl shadow-xl border-4 border-white" />
-                                <p className="mt-6 text-gray-500 italic text-sm">* 實際課程內容將視學生進度由老師微調調整 *</p>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Video Showcase Section */}
-                    <section className="py-20 bg-gray-900 text-white">
-                        <div className="max-w-6xl mx-auto px-4">
-                            <div className="text-center mb-12">
-                                <h3 className="text-3xl font-bold flex items-center justify-center mb-4">
-                                    <Icon name="play-circle" className="mr-3 text-orange-500" /> 教學精彩實錄
-                                </h3>
-                                <p className="text-gray-400">點擊影片圖片，即可另開視窗觀看教學片段 ✨</p>
-                            </div>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {videos.map((video) => (
-                                    <a 
-                                        key={video.id} 
-                                        href={`https://www.youtube.com/watch?v=${video.id}`} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="group bg-gray-800 rounded-3xl overflow-hidden shadow-xl hover:-translate-y-2 transition-all duration-300 border border-gray-700"
-                                    >
-                                        <div className="relative aspect-video overflow-hidden">
-                                            <img 
-                                                src={`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`} 
-                                                alt={video.title}
-                                                className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" 
-                                                onError={(e) => { e.target.src = `https://img.youtube.com/vi/${video.id}/mqdefault.jpg`; }}
-                                            />
-                                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-colors">
-                                                <div className="bg-orange-500 text-white p-4 rounded-full shadow-2xl scale-90 group-hover:scale-110 transition-transform">
-                                                    <Icon name="play-circle" className="w-8 h-8 fill-current" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="p-6">
-                                            <h4 className="text-xl font-bold mb-2 group-hover:text-orange-400 transition-colors">{video.title}</h4>
-                                            <p className="text-gray-400 text-sm leading-relaxed">{video.desc}</p>
-                                            <div className="mt-4 flex items-center text-xs font-bold text-orange-500 uppercase tracking-widest">
-                                                立即前往播放 <Icon name="external-link" className="w-3 h-3 ml-2" />
-                                            </div>
-                                        </div>
-                                    </a>
-                                ))}
-                            </div>
-                        </div>
-                    </section>
-
                     {/* Enrollment Form Section */}
-                    <section id="enroll-form" className="py-24 bg-white">
+                    <section id="enroll-form" className="py-24 bg-white scroll-mt-20">
                         <div className="max-w-4xl mx-auto px-4">
                             <div className="bg-orange-50 rounded-[3rem] p-8 md:p-16 shadow-2xl border-2 border-orange-100 relative overflow-hidden min-h-[500px] flex items-center justify-center">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-orange-200/30 rounded-full -translate-y-16 translate-x-16"></div>
@@ -297,7 +253,7 @@
                                             </p>
                                             <button 
                                                 onClick={() => setSubmitted(false)}
-                                                className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-lg hover:scale-105"
+                                                className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-lg"
                                             >
                                                 返回表單
                                             </button>
@@ -306,40 +262,18 @@
                                         <>
                                             <div className="text-center mb-12">
                                                 <h3 className="text-4xl font-black text-gray-900 mb-4 italic">預約報名 / 諮詢</h3>
-                                                <p className="text-gray-600 font-bold">請填寫下方資訊，我們將有專人與您聯繫</p>
+                                                <p className="text-gray-600 font-bold text-lg">填寫資訊，我們將有專人與您聯繫</p>
                                             </div>
 
                                             <form onSubmit={handleSubmit} className="space-y-8">
-                                                {error && (
-                                                    <div className="bg-red-50 text-red-600 p-4 rounded-xl border border-red-100 flex items-center animate-bounce-short">
-                                                        <Icon name="alert-circle" className="w-5 h-5 mr-3" />
-                                                        <span className="font-bold">{error}</span>
-                                                    </div>
-                                                )}
                                                 <div className="grid md:grid-cols-2 gap-8">
                                                     <div className="space-y-3">
                                                         <label className="block text-xl font-black text-gray-800">學生姓名</label>
-                                                        <input 
-                                                            name="studentName"
-                                                            type="text" 
-                                                            required
-                                                            placeholder="請輸入姓名"
-                                                            value={formData.studentName}
-                                                            onChange={(e) => setFormData({...formData, studentName: e.target.value})}
-                                                            className="w-full bg-white border-2 border-orange-100 rounded-2xl px-6 py-4 text-lg focus:border-orange-500 focus:ring-4 focus:ring-orange-200 outline-none transition-all placeholder:text-gray-300 shadow-sm"
-                                                        />
+                                                        <input name="studentName" type="text" required placeholder="請輸入姓名" value={formData.studentName} onChange={(e) => setFormData({...formData, studentName: e.target.value})} className="w-full bg-white border-2 border-orange-100 rounded-2xl px-6 py-4 text-lg focus:border-orange-500 outline-none transition-all shadow-sm" />
                                                     </div>
                                                     <div className="space-y-3">
                                                         <label className="block text-xl font-black text-gray-800">就讀學校</label>
-                                                        <input 
-                                                            name="school"
-                                                            type="text" 
-                                                            required
-                                                            placeholder="例如：竹北國小"
-                                                            value={formData.school}
-                                                            onChange={(e) => setFormData({...formData, school: e.target.value})}
-                                                            className="w-full bg-white border-2 border-orange-100 rounded-2xl px-6 py-4 text-lg focus:border-orange-500 focus:ring-4 focus:ring-orange-200 outline-none transition-all placeholder:text-gray-300 shadow-sm"
-                                                        />
+                                                        <input name="school" type="text" required placeholder="例如：竹北國小" value={formData.school} onChange={(e) => setFormData({...formData, school: e.target.value})} className="w-full bg-white border-2 border-orange-100 rounded-2xl px-6 py-4 text-lg focus:border-orange-500 outline-none transition-all shadow-sm" />
                                                     </div>
                                                 </div>
 
@@ -347,13 +281,7 @@
                                                     <div className="space-y-3">
                                                         <label className="block text-xl font-black text-gray-800">年級</label>
                                                         <div className="relative">
-                                                            <select 
-                                                                name="grade"
-                                                                required
-                                                                value={formData.grade}
-                                                                onChange={(e) => setFormData({...formData, grade: e.target.value})}
-                                                                className="w-full bg-white border-2 border-orange-100 rounded-2xl px-6 py-4 text-lg focus:border-orange-500 focus:ring-4 focus:ring-orange-200 outline-none transition-all appearance-none cursor-pointer shadow-sm"
-                                                            >
+                                                            <select name="grade" required value={formData.grade} onChange={(e) => setFormData({...formData, grade: e.target.value})} className="w-full bg-white border-2 border-orange-100 rounded-2xl px-6 py-4 text-lg focus:border-orange-500 outline-none transition-all appearance-none cursor-pointer shadow-sm font-medium">
                                                                 <option value="" disabled>請點選年級</option>
                                                                 <option value="小班">小班</option>
                                                                 <option value="中班">中班</option>
@@ -368,23 +296,11 @@
                                                     </div>
                                                     <div className="space-y-3">
                                                         <label className="block text-xl font-black text-gray-800">家長聯絡電話</label>
-                                                        <input 
-                                                            name="phone"
-                                                            type="tel" 
-                                                            required
-                                                            placeholder="09XX-XXX-XXX"
-                                                            value={formData.phone}
-                                                            onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                                                            className="w-full bg-white border-2 border-orange-100 rounded-2xl px-6 py-4 text-lg focus:border-orange-500 focus:ring-4 focus:ring-orange-200 outline-none transition-all placeholder:text-gray-300 shadow-sm"
-                                                        />
+                                                        <input name="phone" type="tel" required placeholder="09XX-XXX-XXX" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full bg-white border-2 border-orange-100 rounded-2xl px-6 py-4 text-lg focus:border-orange-500 outline-none transition-all shadow-sm" />
                                                     </div>
                                                 </div>
 
-                                                <button 
-                                                    type="submit"
-                                                    disabled={isSubmitting}
-                                                    className={`w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-2xl py-6 rounded-3xl shadow-xl transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center group ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
-                                                >
+                                                <button type="submit" disabled={isSubmitting} className="w-full bg-orange-500 hover:bg-orange-600 text-white font-black text-2xl py-6 rounded-3xl shadow-xl transition-all hover:scale-[1.01] active:scale-95 flex items-center justify-center group disabled:opacity-70">
                                                     {isSubmitting ? '正在傳送報名資料...' : '立即提交報名'} 
                                                     {!isSubmitting && <Icon name="chevron-right" className="ml-2 w-8 h-8 group-hover:translate-x-1 transition-transform" />}
                                                 </button>
@@ -399,28 +315,29 @@
                     {/* Footer */}
                     <footer className="bg-orange-500 text-white pt-20 pb-10">
                         <div className="max-w-6xl mx-auto px-4">
-                            <div className="bg-white text-gray-900 rounded-3xl p-8 md:p-12 shadow-2xl mb-16 flex flex-col md:flex-row items-center justify-between">
-                                <div className="mb-8 md:mb-0 md:w-2/3 text-center md:text-left">
+                            <div className="bg-white text-gray-900 rounded-[2.5rem] p-8 md:p-12 shadow-2xl mb-16 flex flex-col md:flex-row items-center justify-between">
+                                <div className="mb-10 md:mb-0 md:w-2/3 text-center md:text-left">
                                     <h3 className="text-3xl font-black mb-4">聯絡資訊</h3>
-                                    <div className="space-y-4 font-bold flex flex-col items-center md:items-start">
-                                        <div className="flex items-center"><Icon name="phone" className="w-5 h-5 mr-3 text-orange-500" /> {courseData.phone}</div>
-                                        <div className="flex items-start text-left"><Icon name="map-pin" className="w-5 h-5 mr-3 text-orange-500 mt-1" /> {courseData.address}</div>
+                                    <div className="space-y-4 font-bold flex flex-col items-center md:items-start text-lg">
+                                        <div className="flex items-center"><Icon name="phone" className="w-6 h-6 mr-3 text-orange-500" /> {courseData.phone}</div>
+                                        <div className="flex items-start text-left leading-tight"><Icon name="map-pin" className="w-6 h-6 mr-3 text-orange-500 mt-1" /> {courseData.address}</div>
                                     </div>
-                                    <a href={courseData.navigationUrl} target="_blank" className="mt-6 inline-flex items-center bg-blue-50 text-blue-600 px-4 py-2 rounded-xl text-sm font-bold">
-                                        <Icon name="navigation" className="w-4 h-4 mr-2" /> Google 地圖導航
+                                    <a href={courseData.navigationUrl} target="_blank" className="mt-8 inline-flex items-center bg-blue-50 text-blue-600 px-6 py-3 rounded-2xl font-bold hover:bg-blue-100 transition-colors">
+                                        <Icon name="navigation" className="w-5 h-5 mr-2" /> Google 地圖導航
                                     </a>
                                 </div>
-                                <div className="w-full md:w-auto flex flex-col space-y-4 mt-8 md:mt-0">
-                                    <a href={courseData.lineUrl} target="_blank" className="bg-[#06C755] text-white px-10 py-5 rounded-2xl font-black text-xl flex items-center justify-center shadow-lg transition-transform hover:scale-105">
-                                        <Icon name="message-circle" className="w-6 h-6 mr-3" /> LINE 諮詢
+                                <div className="w-full md:w-auto flex flex-col space-y-5 items-center">
+                                    <a href={courseData.lineUrl} target="_blank" className="w-full max-w-xs bg-[#06C755] text-white px-10 py-5 rounded-2xl font-black text-xl flex items-center justify-center shadow-lg transition-transform hover:scale-105 active:scale-95">
+                                        <Icon name="message-circle" className="w-7 h-7 mr-3 text-white fill-current" /> LINE 諮詢
                                     </a>
-                                    <a href={courseData.facebookUrl} target="_blank" className="bg-blue-600 text-white px-10 py-5 rounded-2xl font-black text-xl flex items-center justify-center shadow-lg transition-transform hover:scale-105">
-                                        <Icon name="facebook" className="w-6 h-6 mr-3" /> 金名德晉臉書
+                                    <a href={courseData.facebookUrl} target="_blank" className="w-full max-w-xs bg-blue-600 text-white px-10 py-5 rounded-2xl font-black text-xl flex items-center justify-center shadow-lg transition-transform hover:scale-105 active:scale-95 text-center">
+                                        <Icon name="facebook" className="w-7 h-7 mr-3 text-white fill-current" /> 
+                                        <span className="flex-1 text-center">金名德晉臉書</span>
                                     </a>
                                 </div>
                             </div>
                             <div className="text-center border-t border-orange-400 pt-8">
-                                <p className="text-orange-200 text-sm">© 2026 {courseData.schoolName} 版權所有</p>
+                                <p className="text-orange-200 text-sm font-medium">© 2026 {courseData.schoolName} 版權所有 | 陪伴孩子自信踏入小學的第一步</p>
                             </div>
                         </div>
                     </footer>
