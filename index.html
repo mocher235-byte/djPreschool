@@ -102,7 +102,7 @@
                 facebookUrl: "https://www.facebook.com/profile.php?id=100093037064982",
                 navigationUrl: "https://share.google/U27mXQ44931dQ7egu",
                 branchInfoUrl: "https://share.google/VB2ZaBY0otRavFQxT",
-                scheduleImage: "https://i.postimg.cc/rpDGRGsP/ying-mu-xie-qu-hua-mian-2026-04-18-000725.png",
+                scheduleImage: "https://i.postimg.cc/CMcn5XYh/S-652648467.jpg",
                 logo: "https://blogger.googleusercontent.com/img/a/AVvXsEjRqKCNWrsH37nthSraJgRc4iUslqv0Pw0urBa9ZwTuV3CLiliGNWjV3EddlJwJ7ox07Uol5GQL77Msjqw-_MUrwQIS6E7iHsdc-RaogP2TVjkJmZ1IkGSrX4ZCLfiZmapAPl5PyxovhZwtsxh080ROmCTJWQcbdtBMAAYIlO-BIsofB7tRYNn0ZZTHEgM",
                 batches: [
                     { id: 1, name: "第一梯次", date: "7/01 ~ 7/31", status: "熱烈報名中" },
@@ -111,6 +111,14 @@
                 target: "升小一學生 (滿 5 人開班/梯次)",
                 description: "在「金名德晉」遇見最有耐心的老師，陪伴孩子跨越拼音關卡。誰說學正音很枯燥？看孩子們如何快樂學習，自信發音！"
             };
+
+            const videos = [
+                { id: "4bGeESyP-os", title: "小小李白唐詩挑戰", desc: "看孩子們如何用四聲挑戰經典唐詩，學習更有趣！" },
+                { id: "QvdFyr3V-oM", title: "老師耐心個別指導", desc: "一對一細心調整發音，給孩子最溫暖的陪伴。" },
+                { id: "LtBOBiLTIQw", title: "超強聲調大聲唸", desc: "跟著老師大聲唸出超強聲調，自信感爆棚！" },
+                { id: "O6aNmcJX0VA", title: "學習日常碎片", desc: "記錄寶貝們自信拼音的每一個快樂瞬間。" },
+                { id: "abMf5N77F3I", title: "跨越拼音關卡", desc: "最專業的教學，讓拼音不再是難事。" }
+            ];
 
             const scrollToForm = () => {
                 const element = document.getElementById('enroll-form');
@@ -234,6 +242,48 @@
                         </div>
                     </section>
 
+                    {/* Course Schedule Section */}
+                    <section className="py-20 bg-white">
+                        <div className="max-w-4xl mx-auto px-4 text-center">
+                            <div className="inline-flex items-center justify-center bg-orange-100 text-orange-600 px-6 py-2 rounded-full mb-6">
+                                <Icon name="book-open" className="w-5 h-5 mr-2" />
+                                <span className="font-bold">課程大綱與時間表</span>
+                            </div>
+                            <h3 className="text-3xl font-bold mb-8 text-gray-900 underline decoration-orange-400 underline-offset-8">正音班詳細課表</h3>
+                            <div className="bg-orange-50 p-4 md:p-8 rounded-[2.5rem] shadow-inner border-2 border-orange-100">
+                                <img 
+                                    src={courseData.scheduleImage} 
+                                    alt="Course Schedule" 
+                                    className="w-full h-auto rounded-2xl shadow-xl border-4 border-white"
+                                />
+                                <p className="mt-6 text-gray-500 italic text-sm">* 實際課程內容將視學生進度由老師微調調整 *</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Video Showcase Section */}
+                    <section className="py-20 bg-gray-900 text-white">
+                        <div className="max-w-6xl mx-auto px-4">
+                            <h3 className="text-3xl font-bold flex items-center justify-center mb-12">
+                                <Icon name="play-circle" className="mr-3 text-orange-500" /> 教學精彩實錄
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-center">
+                                {videos.map((video) => (
+                                    <a key={video.id} href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" className="group bg-gray-800 rounded-3xl overflow-hidden shadow-xl hover:-translate-y-2 transition-all border border-gray-700 block">
+                                        <div className="relative aspect-video">
+                                            <img src={`https://img.youtube.com/vi/${video.id}/mqdefault.jpg`} alt={video.title} className="w-full h-full object-cover" />
+                                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center"><Icon name="play-circle" className="w-12 h-12 text-white" /></div>
+                                        </div>
+                                        <div className="p-6">
+                                            <h4 className="text-xl font-bold mb-2 group-hover:text-orange-400">{video.title}</h4>
+                                            <p className="text-gray-400 text-sm">{video.desc}</p>
+                                        </div>
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
                     {/* Enrollment Form Section */}
                     <section id="enroll-form" className="py-24 bg-white scroll-mt-20">
                         <div className="max-w-4xl mx-auto px-4">
@@ -283,11 +333,7 @@
                                                         <div className="relative">
                                                             <select name="grade" required value={formData.grade} onChange={(e) => setFormData({...formData, grade: e.target.value})} className="w-full bg-white border-2 border-orange-100 rounded-2xl px-6 py-4 text-lg focus:border-orange-500 outline-none transition-all appearance-none cursor-pointer shadow-sm font-medium">
                                                                 <option value="" disabled>請點選年級</option>
-                                                                <option value="小班">小班</option>
-                                                                <option value="中班">中班</option>
-                                                                <option value="大班">大班</option>
                                                                 <option value="大班升小一">大班升小一</option>
-                                                                <option value="其他">其他</option>
                                                             </select>
                                                             <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-orange-400">
                                                                 <Icon name="chevron-down" className="w-6 h-6" />
