@@ -153,7 +153,9 @@
                 facebookUrl: "https://www.facebook.com/profile.php?id=100093037064982",
                 navigationUrl: "https://share.google/U27mXQ44931dQ7egu",
                 logo: "https://blogger.googleusercontent.com/img/a/AVvXsEjRqKCNWrsH37nthSraJgRc4iUslqv0Pw0urBa9ZwTuV3CLiliGNWjV3EddlJwJ7ox07Uol5GQL77Msjqw-_MUrwQIS6E7iHsdc-RaogP2TVjkJmZ1IkGSrX4ZCLfiZmapAPl5PyxovhZwtsxh080ROmCTJWQcbdtBMAAYIlO-BIsofB7tRYNn0ZZTHEgM",
-                // 更新主打影片連結與極力引導封面
+                // 課表圖片
+                scheduleImage: "https://i.postimg.cc/CMcn5XYh/S-652648467.jpg",
+                // 主打影片連結與極力引導封面
                 mainVideoUrl: "https://youtube.com/shorts/gsO9PVrtyVo",
                 mainVideoCover: "https://i.postimg.cc/RZn7Fnbf/4yue22ri-(4)-fu-ben-feng-mian.jpg",
                 photos: [
@@ -319,8 +321,29 @@
                         </div>
                     </section>
 
+                    {/* Course Schedule Section */}
+                    <section className="py-20 bg-white">
+                        <div className="max-w-4xl mx-auto px-6 text-center">
+                            <div className="inline-flex items-center justify-center bg-orange-100 text-orange-600 px-6 py-2 rounded-full mb-6">
+                                <Icon name="calendar" className="w-5 h-5 mr-2" />
+                                <span className="font-bold tracking-wider">課程時間表</span>
+                            </div>
+                            <h3 className="text-4xl font-black text-gray-800 mb-12 tracking-tight">正音班詳細課表</h3>
+                            <div className="bg-orange-50/50 p-4 md:p-8 rounded-[3rem] shadow-inner border border-orange-100 overflow-hidden">
+                                <img 
+                                    src={courseData.scheduleImage} 
+                                    alt="課程課表" 
+                                    className="w-full h-auto rounded-3xl shadow-xl border-4 border-white transform transition-transform hover:scale-[1.01]"
+                                />
+                                <p className="mt-8 text-gray-500 font-bold italic text-lg leading-relaxed">
+                                    * 實際課程內容將視學生進度由老師微調調整 *
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
                     {/* Photo Collection - Updated to Slideshow */}
-                    <section className="py-24 bg-white">
+                    <section className="py-24 bg-orange-50/20">
                         <div className="max-w-6xl mx-auto px-6">
                             <div className="text-center mb-16">
                                 <h3 className="text-4xl font-black text-gray-800 mb-4 tracking-tight">📸 學習成長點滴</h3>
@@ -332,7 +355,7 @@
                     </section>
 
                     {/* Enrollment Form */}
-                    <section id="enroll-form" className="py-24 bg-orange-50/20">
+                    <section id="enroll-form" className="py-24 bg-white">
                         <div className="max-w-3xl mx-auto px-6">
                             <div className="bg-white rounded-[3rem] p-10 md:p-16 shadow-2xl border border-orange-100">
                                 {submitted ? (
