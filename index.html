@@ -145,7 +145,20 @@
                     "https://i.postimg.cc/Xv14zp4t/IMG-7717.jpg",
                     "https://i.postimg.cc/GtGRtKG0/IMG-8422.avif",
                     "https://i.postimg.cc/G3ydXLNM/IMG-9908.jpg"
-                ]
+                ],
+                // 家說會資訊
+                infoSession: {
+                    title: "小一家長說明會",
+                    date: "2026/04/26 (日)",
+                    time: "10:00 ～ 11:30",
+                    // 更新後的行事曆連結：加入導航與詳細資訊
+                    get calendarLink() {
+                        const title = encodeURIComponent(`金名德晉 ${this.title}`);
+                        const details = encodeURIComponent(`歡迎家長蒞臨參加說明會，陪伴孩子自信踏入小學的第一步！\n\n📍 地點：新竹縣竹北市文孝街23號 (補教協會2樓)\n🚗 導航連結：https://share.google/U27mXQ44931dQ7egu`);
+                        const location = encodeURIComponent(`新竹縣竹北市文孝街23號 (補教協會2樓)`);
+                        return `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=20260426T100000/20260426T113000&details=${details}&location=${location}`;
+                    }
+                }
             };
 
             const scrollToForm = () => {
@@ -172,7 +185,7 @@
                         body: JSON.stringify(formData)
                     });
                     if (response.ok) {
-                        const copyText = `【正音班諮詢資料】\n學生姓名：${formData.studentName}\n學校：${formData.school}\n年級：${formData.grade}\n電話：${formData.phone}\n介紹碼：${formData.referrerCode || '無'}`;
+                        const copyText = `【小一先修諮詢資料】\n學生姓名：${formData.studentName}\n學校：${formData.school}\n年級：${formData.grade}\n電話：${formData.phone}`;
                         copyToClipboard(copyText);
                         setSubmitted(true);
                     }
@@ -223,7 +236,7 @@
                     </header>
 
                     {/* Social Interaction Section */}
-                    <section className="pb-16 px-6">
+                    <section className="pb-12 px-6">
                         <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
                             <div className="bg-white p-8 rounded-[2.5rem] border-2 border-blue-50 shadow-sm hover:shadow-md transition-all">
                                 <div className="mb-6">
@@ -251,6 +264,94 @@
                                     <Icon name="message-circle" className="mr-3 fill-current" />
                                     點我前往 LINE 立即諮詢
                                 </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Information Session & Enrollment Form */}
+                    <section id="enroll-form" className="py-16 bg-white scroll-mt-24">
+                        <div className="max-w-4xl mx-auto px-6">
+                            {/* 家說會資訊卡 */}
+                            <div className="mb-12 bg-orange-500 text-white rounded-[3rem] p-8 md:p-12 shadow-2xl relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-4 opacity-20 transform translate-x-4 -translate-y-4">
+                                    <Icon name="megaphone" className="w-32 h-32 rotate-12" />
+                                </div>
+                                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                                    <div className="text-center md:text-left">
+                                        <div className="inline-block bg-white/20 px-4 py-1 rounded-full text-sm font-bold mb-4 backdrop-blur-md">
+                                            📢 特別活動公告
+                                        </div>
+                                        <h3 className="text-3xl md:text-4xl font-black mb-4 tracking-tight italic">{courseData.infoSession.title}</h3>
+                                        <div className="space-y-2 text-xl font-bold">
+                                            <p className="flex items-center justify-center md:justify-start"><Icon name="calendar" className="w-6 h-6 mr-3" /> {courseData.infoSession.date}</p>
+                                            <p className="flex items-center justify-center md:justify-start"><Icon name="clock" className="w-6 h-6 mr-3" /> {courseData.infoSession.time}</p>
+                                            <p className="flex items-start justify-center md:justify-start text-base mt-2 opacity-90"><Icon name="map-pin" className="w-5 h-5 mr-3 mt-1" /> {courseData.address}</p>
+                                        </div>
+                                    </div>
+                                    <div className="w-full md:w-auto">
+                                        <a href={courseData.infoSession.calendarLink} target="_blank" className="w-full md:w-auto inline-flex items-center justify-center bg-white text-orange-600 px-8 py-4 rounded-2xl font-black text-xl shadow-lg hover:scale-105 transition-all">
+                                            <Icon name="calendar-plus" className="w-6 h-6 mr-3" />
+                                            加入行事曆與導航
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 預約諮詢表單 */}
+                            <div className="bg-white rounded-[3rem] p-10 md:p-16 shadow-2xl border-2 border-orange-100">
+                                {submitted ? (
+                                    <div className="text-center space-y-8 animate-fade-in-up py-10">
+                                        <div className="bg-green-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto shadow-inner"><Icon name="check" className="text-green-600 w-12 h-12" /></div>
+                                        <div>
+                                            <h4 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">提交成功！即將為您加 LINE</h4>
+                                            <p className="text-gray-600 text-xl font-medium leading-relaxed italic">
+                                                您的諮詢資料已自動複製。<br/>
+                                                請點擊下方按鈕加入 LINE 並「貼上」發送資料。
+                                            </p>
+                                        </div>
+                                        <div className="space-y-4">
+                                            <a href={courseData.enrollLineUrl} target="_blank" className="w-full flex items-center justify-center bg-[#06C755] text-white py-6 rounded-3xl text-2xl font-black shadow-xl hover:scale-[1.02] transition-transform">
+                                                <Icon name="message-circle" className="w-8 h-8 mr-3 fill-current" />
+                                                點我加 LINE 並貼上資料
+                                            </a>
+                                            <p className="text-gray-400 font-bold text-sm">※ 點擊後會自動導向 LINE 官方帳號</p>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <form onSubmit={handleSubmit} className="space-y-8">
+                                        <div className="text-center mb-10">
+                                            <h3 className="text-4xl font-black text-gray-800 mb-2 italic tracking-tight">預約諮詢</h3>
+                                            <p className="text-lg text-gray-500 font-bold">提交資料後會自動加 LINE 好友由老師為您服務</p>
+                                        </div>
+                                        <div className="grid md:grid-cols-2 gap-8">
+                                            <div className="space-y-2">
+                                                <label className="block font-black text-gray-700 ml-1 text-lg">學生姓名</label>
+                                                <input required type="text" placeholder="輸入真實姓名" className="w-full bg-orange-50/50 border-2 border-transparent focus:border-orange-400 focus:bg-white rounded-2xl px-6 py-4 outline-none transition-all shadow-inner text-lg font-medium" value={formData.studentName} onChange={e => setFormData({...formData, studentName: e.target.value})} />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="block font-black text-gray-700 ml-1 text-lg">就讀學校</label>
+                                                <input required type="text" placeholder="例如：中正國小" className="w-full bg-orange-50/50 border-2 border-transparent focus:border-orange-400 focus:bg-white rounded-2xl px-6 py-4 outline-none transition-all shadow-inner text-lg font-medium" value={formData.school} onChange={e => setFormData({...formData, school: e.target.value})} />
+                                            </div>
+                                        </div>
+                                        <div className="grid md:grid-cols-2 gap-8">
+                                            <div className="space-y-2">
+                                                <label className="block font-black text-gray-700 ml-1 text-lg">年級</label>
+                                                <select required className="w-full bg-orange-50/50 border-2 border-transparent focus:border-orange-400 focus:bg-white rounded-2xl px-6 py-4 outline-none transition-all shadow-inner text-lg font-medium cursor-pointer" value={formData.grade} onChange={e => setFormData({...formData, grade: e.target.value})}>
+                                                    <option value="" disabled>請選擇年級</option>
+                                                    <option value="大班升小一">大班升小一</option>
+                                                    <option value="其他">其他</option>
+                                                </select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="block font-black text-gray-700 ml-1 text-lg">家長聯絡電話</label>
+                                                <input required type="tel" placeholder="09XX-XXX-XXX" className="w-full bg-orange-50/50 border-2 border-transparent focus:border-orange-400 focus:bg-white rounded-2xl px-6 py-4 outline-none transition-all shadow-inner text-lg font-medium" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
+                                            </div>
+                                        </div>
+                                        <button type="submit" disabled={isSubmitting} className="w-full btn-3d bg-orange-500 text-white font-black text-2xl py-6 rounded-3xl shadow-xl mt-4">
+                                            {isSubmitting ? '處理中...' : '提交諮詢資料'}
+                                        </button>
+                                    </form>
+                                )}
                             </div>
                         </div>
                     </section>
@@ -332,7 +433,7 @@
                                 <Icon name="calendar" className="w-5 h-5 mr-2" />
                                 <span className="font-bold tracking-wider">課程時間表</span>
                             </div>
-                            <h3 className="text-4xl font-black text-gray-800 mb-12 tracking-tight">正音班詳細課表</h3>
+                            <h3 className="text-4xl font-black text-gray-800 mb-12 tracking-tight">小一先修班詳細課表</h3>
                             <div className="bg-orange-50/50 p-4 md:p-8 rounded-[3rem] shadow-inner border border-orange-100 overflow-hidden">
                                 <img src={courseData.scheduleImage} alt="課程課表" className="w-full h-auto rounded-3xl shadow-xl border-4 border-white transform transition-transform hover:scale-[1.01]" />
                             </div>
@@ -347,67 +448,6 @@
                                 <p className="text-xl text-gray-500 font-medium italic">記錄孩子在金名德晉的每一個快樂瞬間</p>
                             </div>
                             <Slideshow images={courseData.photos} />
-                        </div>
-                    </section>
-
-                    {/* Enrollment Form */}
-                    <section id="enroll-form" className="py-24 bg-white">
-                        <div className="max-w-3xl mx-auto px-6">
-                            <div className="bg-white rounded-[3rem] p-10 md:p-16 shadow-2xl border border-orange-100">
-                                {submitted ? (
-                                    <div className="text-center space-y-8 animate-fade-in-up py-10">
-                                        <div className="bg-green-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto shadow-inner"><Icon name="check" className="text-green-600 w-12 h-12" /></div>
-                                        <div>
-                                            <h4 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">提交成功！即將為您加 LINE</h4>
-                                            <p className="text-gray-600 text-xl font-medium leading-relaxed italic">
-                                                您的諮詢資料已自動複製。<br/>
-                                                請點擊下方按鈕加入 LINE 並「貼上」發送資料。
-                                            </p>
-                                        </div>
-                                        <div className="space-y-4">
-                                            <a href={courseData.enrollLineUrl} target="_blank" className="w-full flex items-center justify-center bg-[#06C755] text-white py-6 rounded-3xl text-2xl font-black shadow-xl hover:scale-[1.02] transition-transform">
-                                                <Icon name="message-circle" className="w-8 h-8 mr-3 fill-current" />
-                                                點我加 LINE 並貼上資料
-                                            </a>
-                                            <p className="text-gray-400 font-bold text-sm">※ 點擊後會自動導向 LINE 官方帳號</p>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <form onSubmit={handleSubmit} className="space-y-8">
-                                        <div className="text-center mb-10">
-                                            <h3 className="text-4xl font-black text-gray-800 mb-2 italic tracking-tight">預約諮詢</h3>
-                                            <p className="text-lg text-gray-500 font-bold">提交資料後會自動加 LINE 好友由老師為您服務</p>
-                                        </div>
-                                        <div className="grid md:grid-cols-2 gap-8">
-                                            <div className="space-y-2">
-                                                <label className="block font-black text-gray-700 ml-1 text-lg">學生姓名</label>
-                                                <input required type="text" placeholder="輸入真實姓名" className="w-full bg-orange-50/50 border-2 border-transparent focus:border-orange-400 focus:bg-white rounded-2xl px-6 py-4 outline-none transition-all shadow-inner text-lg font-medium" value={formData.studentName} onChange={e => setFormData({...formData, studentName: e.target.value})} />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <label className="block font-black text-gray-700 ml-1 text-lg">就讀學校</label>
-                                                <input required type="text" placeholder="例如：中正國小" className="w-full bg-orange-50/50 border-2 border-transparent focus:border-orange-400 focus:bg-white rounded-2xl px-6 py-4 outline-none transition-all shadow-inner text-lg font-medium" value={formData.school} onChange={e => setFormData({...formData, school: e.target.value})} />
-                                            </div>
-                                        </div>
-                                        <div className="grid md:grid-cols-2 gap-8">
-                                            <div className="space-y-2">
-                                                <label className="block font-black text-gray-700 ml-1 text-lg">年級</label>
-                                                <select required className="w-full bg-orange-50/50 border-2 border-transparent focus:border-orange-400 focus:bg-white rounded-2xl px-6 py-4 outline-none transition-all shadow-inner text-lg font-medium cursor-pointer" value={formData.grade} onChange={e => setFormData({...formData, grade: e.target.value})}>
-                                                    <option value="" disabled>請選擇年級</option>
-                                                    <option value="大班升小一">大班升小一</option>
-                                                    <option value="其他">其他</option>
-                                                </select>
-                                            </div>
-                                            <div className="space-y-2">
-                                                <label className="block font-black text-gray-700 ml-1 text-lg">家長聯絡電話</label>
-                                                <input required type="tel" placeholder="09XX-XXX-XXX" className="w-full bg-orange-50/50 border-2 border-transparent focus:border-orange-400 focus:bg-white rounded-2xl px-6 py-4 outline-none transition-all shadow-inner text-lg font-medium" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
-                                            </div>
-                                        </div>
-                                        <button type="submit" disabled={isSubmitting} className="w-full btn-3d bg-orange-500 text-white font-black text-2xl py-6 rounded-3xl shadow-xl mt-4">
-                                            {isSubmitting ? '處理中...' : '提交諮詢資料'}
-                                        </button>
-                                    </form>
-                                )}
-                            </div>
                         </div>
                     </section>
 
