@@ -146,17 +146,19 @@
                     "https://i.postimg.cc/GtGRtKG0/IMG-8422.avif",
                     "https://i.postimg.cc/G3ydXLNM/IMG-9908.jpg"
                 ],
-                // 家說會資訊
+                // 特別活動資訊
                 infoSession: {
-                    title: "小一家長說明會",
-                    date: "2026/04/26 (日)",
-                    time: "10:00 ～ 11:30",
-                    // 更新後的行事曆連結：加入導航與詳細資訊
+                    title: "小一新生姓名印章及 AI 實作體驗",
+                    date: "2026/05/30 (六)",
+                    time: "13:00 ～ 14:00",
+                    productImage: "https://i.postimg.cc/8k7HNLFT/Chat-GPT-Image-2025nian5yue5ri-xia-wu10-39-54.png",
+                    priceInfo: "原價 500 元 ⮕ 公益活動完全免費",
+                    limitNote: "限額 5 名，欲報從速！",
                     get calendarLink() {
                         const title = encodeURIComponent(`金名德晉 ${this.title}`);
-                        const details = encodeURIComponent(`歡迎家長蒞臨參加說明會，陪伴孩子自信踏入小學的第一步！\n\n📍 地點：新竹縣竹北市文孝街23號 (補教協會2樓)\n🚗 導航連結：https://share.google/U27mXQ44931dQ7egu`);
+                        const details = encodeURIComponent(`歡迎參加小一新生特別活動！我們將進行姓名印章製作及 AI 實作體驗。\n\n💰 費用：課程原價 500 元，此次為公益活動完全免費！\n👥 名額：限額 5 名\n📍 地點：新竹縣竹北市文孝街23號 (補教協會2樓)\n🚗 導航連結：https://share.google/U27mXQ44931dQ7egu`);
                         const location = encodeURIComponent(`新竹縣竹北市文孝街23號 (補教協會2樓)`);
-                        return `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=20260426T100000/20260426T113000&details=${details}&location=${location}`;
+                        return `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=20260530T130000/20260530T140000&details=${details}&location=${location}`;
                     }
                 }
             };
@@ -268,36 +270,9 @@
                         </div>
                     </section>
 
-                    {/* Information Session & Enrollment Form */}
+                    {/* Enrollment Form */}
                     <section id="enroll-form" className="py-16 bg-white scroll-mt-24">
                         <div className="max-w-4xl mx-auto px-6">
-                            {/* 家說會資訊卡 */}
-                            <div className="mb-12 bg-orange-500 text-white rounded-[3rem] p-8 md:p-12 shadow-2xl relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-4 opacity-20 transform translate-x-4 -translate-y-4">
-                                    <Icon name="megaphone" className="w-32 h-32 rotate-12" />
-                                </div>
-                                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                                    <div className="text-center md:text-left">
-                                        <div className="inline-block bg-white/20 px-4 py-1 rounded-full text-sm font-bold mb-4 backdrop-blur-md">
-                                            📢 特別活動公告
-                                        </div>
-                                        <h3 className="text-3xl md:text-4xl font-black mb-4 tracking-tight italic">{courseData.infoSession.title}</h3>
-                                        <div className="space-y-2 text-xl font-bold">
-                                            <p className="flex items-center justify-center md:justify-start"><Icon name="calendar" className="w-6 h-6 mr-3" /> {courseData.infoSession.date}</p>
-                                            <p className="flex items-center justify-center md:justify-start"><Icon name="clock" className="w-6 h-6 mr-3" /> {courseData.infoSession.time}</p>
-                                            <p className="flex items-start justify-center md:justify-start text-base mt-2 opacity-90"><Icon name="map-pin" className="w-5 h-5 mr-3 mt-1" /> {courseData.address}</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-full md:w-auto">
-                                        <a href={courseData.infoSession.calendarLink} target="_blank" className="w-full md:w-auto inline-flex items-center justify-center bg-white text-orange-600 px-8 py-4 rounded-2xl font-black text-xl shadow-lg hover:scale-105 transition-all">
-                                            <Icon name="calendar-plus" className="w-6 h-6 mr-3" />
-                                            加入行事曆與導航
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* 預約諮詢表單 */}
                             <div className="bg-white rounded-[3rem] p-10 md:p-16 shadow-2xl border-2 border-orange-100">
                                 {submitted ? (
                                     <div className="text-center space-y-8 animate-fade-in-up py-10">
@@ -448,6 +423,85 @@
                                 <p className="text-xl text-gray-500 font-medium italic">記錄孩子在金名德晉的每一個快樂瞬間</p>
                             </div>
                             <Slideshow images={courseData.photos} />
+                        </div>
+                    </section>
+
+                    {/* 特別活動區塊 - 已移至最下方並強化強調 */}
+                    <section className="py-20 bg-white">
+                        <div className="max-w-6xl mx-auto px-6">
+                            <div className="bg-orange-500 text-white rounded-[3rem] p-8 md:p-12 shadow-[0_35px_60px_-15px_rgba(249,115,22,0.3)] relative overflow-hidden">
+                                {/* 背景裝飾 */}
+                                <div className="absolute top-0 right-0 p-4 opacity-10 transform translate-x-8 -translate-y-8">
+                                    <Icon name="megaphone" className="w-64 h-64 rotate-12" />
+                                </div>
+
+                                <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12">
+                                    {/* 文字內容區 */}
+                                    <div className="flex-1 space-y-8 text-center lg:text-left">
+                                        <div className="flex flex-col md:flex-row items-center gap-4 justify-center lg:justify-start">
+                                            <div className="bg-white/20 px-5 py-2 rounded-full text-sm font-black backdrop-blur-md border border-white/30 uppercase tracking-widest">
+                                                📢 限額公益場次
+                                            </div>
+                                            <div className="bg-yellow-400 text-orange-600 px-5 py-2 rounded-full text-sm font-black shadow-lg animate-pulse">
+                                                ⚡ 僅限 5 名額
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            <h3 className="text-4xl md:text-6xl font-black tracking-tighter leading-tight">
+                                                小一新生<br/>
+                                                <span className="text-orange-100">姓名印章及 AI 實作體驗</span>
+                                            </h3>
+                                        </div>
+
+                                        <div className="grid md:grid-cols-2 gap-4 text-xl font-bold">
+                                            <div className="flex items-center justify-center lg:justify-start bg-white/10 p-4 rounded-2xl border border-white/10">
+                                                <Icon name="calendar" className="w-7 h-7 mr-3 text-orange-200" /> {courseData.infoSession.date}
+                                            </div>
+                                            <div className="flex items-center justify-center lg:justify-start bg-white/10 p-4 rounded-2xl border border-white/10">
+                                                <Icon name="clock" className="w-7 h-7 mr-3 text-orange-200" /> {courseData.infoSession.time}
+                                            </div>
+                                        </div>
+
+                                        {/* 強調免費區塊 */}
+                                        <div className="relative group">
+                                            <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                                            <div className="relative bg-white/95 p-8 rounded-3xl border-2 border-yellow-400 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
+                                                <div className="flex items-center">
+                                                    <div className="bg-orange-500 text-white w-16 h-16 rounded-2xl flex items-center justify-center text-3xl font-black shadow-inner mr-5">
+                                                        $0
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-gray-400 font-bold line-through text-lg">原價 500 元課程</p>
+                                                        <p className="text-orange-600 text-3xl font-black tracking-tighter italic">公益活動完全免費！</p>
+                                                    </div>
+                                                </div>
+                                                <a href={courseData.infoSession.calendarLink} target="_blank" className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-5 rounded-2xl font-black text-xl shadow-lg hover:scale-105 transition-all flex items-center justify-center whitespace-nowrap">
+                                                    <Icon name="calendar-plus" className="w-6 h-6 mr-3" />
+                                                    加入行事曆預約
+                                                </a>
+                                            </div>
+                                        </div>
+                                        
+                                        <p className="text-orange-100 font-bold text-center lg:text-left text-lg italic">
+                                            📍 地點：{courseData.address}
+                                        </p>
+                                    </div>
+
+                                    {/* 作品圖片區 */}
+                                    <div className="w-full lg:w-[320px] flex-shrink-0">
+                                        <div className="relative group">
+                                            <div className="absolute inset-0 bg-white/20 rounded-full blur-3xl animate-pulse"></div>
+                                            <div className="relative bg-white p-4 rounded-[3.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] transform rotate-3 transition-transform group-hover:rotate-0 duration-500 border-8 border-orange-400/20">
+                                                <img src={courseData.infoSession.productImage} className="w-full h-auto rounded-[2.5rem] object-cover aspect-square" alt="作品展示" />
+                                                <div className="absolute -bottom-4 -right-4 bg-yellow-400 text-orange-600 px-6 py-3 rounded-2xl font-black shadow-xl transform -rotate-12">
+                                                    作品示意圖
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </section>
 
